@@ -1,17 +1,26 @@
 STB_INCLUDE_PATH = /home/rjacobse/projects/personal/stb
 TINY_OBJ_LOADER_INCLUDE_PATH = /home/rjacobse/projects/personal/tinyobjloader
 
-CFLAGS = -std=c++17 -I$(STB_INCLUDE_PATH) -I$(TINY_OBJ_LOADER_INCLUDE_PATH) -O3
+CXX		  := g++
+CXX_FLAGS := -Wall -Wextra -std=c++17 -ggdb -O3
 
-LDFLAGS = `pkg-config --static --libs glfw3` -lvulkan
+BIN		:= bin
+SRC		:= src
+INCLUDE	:= include
+LIB		:= lib
 
-VulkanMonkey: main.cpp
-	g++ $(CFLAGS) -o VulkanMonkey main.cpp $(LDFLAGS)
+INCLUDES	:= -I$(STB_INCLUDE_PATH) -I$(TINY_OBJ_LOADER_INCLUDE_PATH)
+LIBRARIES	:= `pkg-config --static --libs glfw3` -lvulkan
+EXECUTABLE	:= main
 
-.PHONY: test clean
+all: $(BIN)/$(EXECUTABLE)
 
-test: VulkanMonkey
-	./VulkanMonkey
+run: clean all
+	clear
+	./$(BIN)/$(EXECUTABLE)
+
+$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp
+	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $(INCLUDES) -L$(LIB) $^ -o $@ $(LIBRARIES)
 
 clean:
-	rm -f VulkanMonkey
+	-rm $(BIN)/*
